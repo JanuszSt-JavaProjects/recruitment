@@ -28,8 +28,10 @@ public class Controller implements HttpHandler {
 
         setAction(t);
 
+
         try {
-            stringTSend = setResponse(/*action*/);
+            Object obj = getResponseFromDb(action);
+            stringTSend = returnConvertedToJSON(obj);
             t.sendResponseHeaders(code, stringTSend.length());
             OutputStream os = t.getResponseBody();
             os.write(stringTSend.getBytes(StandardCharsets.UTF_8));
@@ -43,21 +45,34 @@ public class Controller implements HttpHandler {
                 os.write(stringTSend.getBytes(StandardCharsets.UTF_8));
                 os.close();
             }
-        }finally {
+        } finally {
             t.close();
         }
 
 
     }
 
-    private String setResponse(/*action*/) throws SQLException {
+    private String returnConvertedToJSON(Object returnedObj) throws SQLException {
 
+        return convertToJSON(returnedObj);
 
-//        return convertToJSON(dbRequestService.getPosts());      // ====>>  tu zmieniam <====
-        Object response = dbRequestService.getOne(1);
-        return convertToJSON(response);
+    }
 
+    private Object getResponseFromDb(String action) throws SQLException {
 
+        switch (action) {
+/*            case "new_user":
+                createNewUser();
+            case "delete":
+                deletePost();
+            case "new":
+                addPost();
+            case "login":
+                login();*/
+            case "null":
+                return dbRequestService.getPosts();
+        }
+        return null;
     }
 
 
@@ -69,15 +84,21 @@ public class Controller implements HttpHandler {
     private void setAction(HttpExchange t) {
 
         Map<String, String> getQueryMap = new HashMap<>();
-        String[] params = t.getRequestURI().getQuery().split("&");
-        Map<String, String> requestMap = new HashMap<>();
+        String stringURI = t.getRequestURI().getQuery();
+        if (stringURI == null) {
+            action = "null";
+        } else {
+            String[] params = stringURI.split("&");
+            Map<String, String> requestMap = new HashMap<>();
 
-        for (String param : params) {
-            String name = param.split("=")[0];
-            String value = param.split("=")[1];
-            System.out.println(name + "  " + value);
-            requestMap.put(name, value);
+            for (String param : params) {
+                String name = param.split("=")[0];
+                String value = param.split("=")[1];
+                System.out.println(name + "  " + value);
+                requestMap.put(name, value);
+            }
+            action = requestMap.get("action");
         }
-        action = requestMap.get("action");
+
     }
 }
