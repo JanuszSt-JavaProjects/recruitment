@@ -1,6 +1,6 @@
 package blog.config;
 
-import blog.controller.Controller;
+import blog.controller.MainController;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class Server {
 
         try {
             server = HttpServer.create(new InetSocketAddress(8000), 0);
-            server.createContext("/", new Controller());
+            server.createContext("/", new MainController());
             server.setExecutor(null);
             server.start();
         } catch (IOException | SQLException e) {
