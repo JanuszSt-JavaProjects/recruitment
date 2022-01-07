@@ -2,9 +2,13 @@ package blog.service;
 
 import blog.config.Configuration;
 import blog.domain.Post;
+import blog.service.post.PostService;
+import blog.service.user.UserService;
 
-import java.sql.*;
-import java.util.LinkedList;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 public class DbRequestService {
@@ -16,6 +20,8 @@ public class DbRequestService {
             config.getPass());
 
     Statement statement = con.createStatement();
+    PostService postService = new PostService(statement);
+    UserService userService = new UserService(statement);
 
 
     public DbRequestService() throws SQLException {
@@ -23,37 +29,11 @@ public class DbRequestService {
 
 
     public List<Post> getPosts() throws SQLException {
-        List<Post> posts = new LinkedList<>();
-
-        ResultSet resultSet = statement.executeQuery("select * from blog");
-
-
-        while (resultSet.next()) {
-            Post post = new Post();
-            post.setId(resultSet.getInt(1));
-            post.setText(resultSet.getString("text"));
-            post.setUserid(resultSet.getString("userId"));
-            posts.add(post);
-        }
-        return posts;
+        return postService.getPosts();
     }
 
-
     public Post getOne(int id) throws SQLException {
-
-        ResultSet resultSet = null;
-        Post post = new Post();
-
-            resultSet = statement.executeQuery("select * from blog where id =" + id);
-            resultSet.next();
-            post = new Post();
-            post.setId(resultSet.getInt(1));
-
-            post.setText(resultSet.getString("text"));
-            post.setUserid(resultSet.getString("userId"));
-            return post;
-
-
+        return postService.getOne(id);
     }
 }
 

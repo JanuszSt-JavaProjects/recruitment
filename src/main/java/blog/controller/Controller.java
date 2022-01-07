@@ -54,7 +54,7 @@ public class Controller implements HttpHandler {
 
 
 //        return convertToJSON(dbRequestService.getPosts());      // ====>>  tu zmieniam <====
-        Object response = dbRequestService.getOne(10);
+        Object response = dbRequestService.getOne(1);
         return convertToJSON(response);
 
 
