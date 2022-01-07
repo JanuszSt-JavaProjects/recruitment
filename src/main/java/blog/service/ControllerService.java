@@ -13,7 +13,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ControllerService {
@@ -42,8 +41,8 @@ public class ControllerService {
 
         code=403;
         JSONResponse ="No permission!";
-        setAction(t);
 
+        setAction(t);
         getResponseFromDb(action);
 
         return new FinalResponse(
@@ -68,6 +67,7 @@ public class ControllerService {
                 requestMap.put(name, value);
             }
 
+
             action = requestMap.get("action");
             givenParams = requestMap;
         }
@@ -77,17 +77,46 @@ public class ControllerService {
     private void getResponseFromDb(String action) throws SQLException {
 
         switch (action) {
-/*            case "new_user":
+            case "new_user":
                 createNewUser();
-            case "delete":
+                break;
+ /*           case "delete":
                 deletePost();
+                break;
+
             case "new":
                 addPost();
+                break;
             case "login":
-                login();*/
+                login();
+                break;*/
             case "null":
                 getPosts();
         }
+    }
+
+    private void createNewUser() throws SQLException {
+        String username =givenParams.get("username");
+        String pass = givenParams.get("password");
+        String permission =givenParams.get("permission");
+        String readonly =givenParams.get("readonly");
+
+        System.out.println("1  :\n" +username +" "+pass+ " "+permission+" "+readonly);
+
+       if (userService.existByUsernameAndPassword( username,  pass) ){
+           code=409;
+           JSONResponse ="User already exists in the database!";
+
+           System.out.println(" 1: exc wyjście  ifa =========>");
+       }else{
+           System.out.println("1: normalna proc =========>");
+           userService.addUser(username,pass,permission,readonly);
+       }
+
+
+        /*{password=test, readonly=yes, action=new_user, permission=superuser, username=test}
+         */
+
     }
 
 
