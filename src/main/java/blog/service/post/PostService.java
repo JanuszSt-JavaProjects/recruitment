@@ -12,7 +12,6 @@ public class PostService {
 
     Statement statement;
 
-
     public PostService(Statement stmt) {
         statement = stmt;
     }
@@ -23,7 +22,6 @@ public class PostService {
 
         ResultSet resultSet = statement.executeQuery("select * from blog");
 
-
         while (resultSet.next()) {
             Post post = new Post();
             post.setId(resultSet.getInt(1));
@@ -33,8 +31,6 @@ public class PostService {
         }
         return posts;
     }
-
-
 
     public Post getOne(int id) throws SQLException {
 
@@ -49,8 +45,6 @@ public class PostService {
         post.setText(resultSet.getString("text"));
         post.setUserid(resultSet.getString("userId"));
         return post;
-
-
     }
 
 }

@@ -3,6 +3,7 @@ package blog.service;
 import blog.config.Configuration;
 import blog.domain.FinalResponse;
 import blog.domain.Post;
+import blog.domain.User;
 import blog.service.post.PostService;
 import blog.service.user.UserService;
 import com.google.gson.Gson;
@@ -36,7 +37,6 @@ public class ControllerService {
     public ControllerService() throws SQLException {
     }
 
-
     public FinalResponse processRequest(HttpExchange t) throws SQLException {
 
         code=403;
@@ -48,8 +48,6 @@ public class ControllerService {
         return new FinalResponse(
                 code, JSONResponse
         );
-
-
     }
 
     private void setAction(HttpExchange t) {
@@ -66,12 +64,9 @@ public class ControllerService {
                 String value = param.split("=")[1];
                 requestMap.put(name, value);
             }
-
-
             action = requestMap.get("action");
             givenParams = requestMap;
         }
-
     }
 
     private void getResponseFromDb(String action) throws SQLException {
@@ -80,11 +75,11 @@ public class ControllerService {
             case "new_user":
                 createNewUser();
                 break;
- /*           case "delete":
+           case "delete":
                 deletePost();
                 break;
 
-            case "new":
+   /*          case "new":
                 addPost();
                 break;
             case "login":
@@ -95,28 +90,25 @@ public class ControllerService {
         }
     }
 
+    private void deletePost() {
+
+    }
+
     private void createNewUser() throws SQLException {
         String username =givenParams.get("username");
         String pass = givenParams.get("password");
         String permission =givenParams.get("permission");
         String readonly =givenParams.get("readonly");
 
-        System.out.println("1  :\n" +username +" "+pass+ " "+permission+" "+readonly);
-
        if (userService.existByUsernameAndPassword( username,  pass) ){
            code=409;
            JSONResponse ="User already exists in the database!";
 
-           System.out.println(" 1: exc wyjście  ifa =========>");
        }else{
-           System.out.println("1: normalna proc =========>");
-           userService.addUser(username,pass,permission,readonly);
+          User user = userService.addUser(username,pass,permission,readonly);
+           code=200;
+           JSONResponse =convertToJSON(user);
        }
-
-
-        /*{password=test, readonly=yes, action=new_user, permission=superuser, username=test}
-         */
-
     }
 
 

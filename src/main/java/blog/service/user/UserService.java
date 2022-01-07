@@ -2,7 +2,10 @@ package blog.service.user;
 
 import blog.domain.User;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class UserService {
 
@@ -12,24 +15,28 @@ public class UserService {
         statement = stmt;
     }
 
-
     public boolean existByUsernameAndPassword(String username, String pass) throws SQLException {
 
-        String query = "select count(*) as existingUsers from user where username = (?)"+" and password =(?)";
+        User user = findByNameAndPassword(username, pass);
+        if (user.getUsername().equals("-1")) {
+            return false;
+        };
+        return true;
+    }
+
+    public boolean existByUserId(int id) throws SQLException {
+
+        String query = "select count(*) as existingUsers from user where userid = (?)";
         PreparedStatement preparedStatement = statement.getConnection().prepareStatement(query);
-        preparedStatement.setString(1, username);
-        preparedStatement.setString(2, pass);
+        preparedStatement.setInt(1, id);
 
         ResultSet execute = preparedStatement.executeQuery();
-
         execute.next();
-        boolean answer = execute.getInt("existingUsers")>0;
-        return answer;
+        return execute.getInt("existingUsers") > 0;
     }
 
     public User addUser(String username, String password, String permission, String readonly) throws SQLException {
 
-        User user = new User();
 
         String query = "insert into user Values (?,?,?,?,?)";
         PreparedStatement preparedStatement = statement.getConnection().prepareStatement(query);
@@ -38,8 +45,33 @@ public class UserService {
         preparedStatement.setString(3, password);
         preparedStatement.setString(4, permission);
         preparedStatement.setString(5, readonly);
-        preparedStatement.execute();
 
-        return null;
+        preparedStatement.execute();
+        return findByNameAndPassword(username, password);
+    }
+
+    public User findByNameAndPassword(String username, String password) throws SQLException {
+
+        String query = "select * from user where username = (?)" + " and password =(?)";
+        PreparedStatement preparedStatement = statement.getConnection().prepareStatement(query);
+
+        preparedStatement.setString(1, username);
+        preparedStatement.setString(2, password);
+
+        ResultSet execute = preparedStatement.executeQuery();
+
+        User user = new User();
+        if (execute.next()) {
+            user.setId(execute.getInt("userid"));
+            user.setPassword(execute.getString("password"));
+            user.setUsername(execute.getString("username"));
+            user.setPermission(execute.getString("permission"));
+            user.setReadonly(execute.getString("readonly"));
+
+            System.out.println("user from findByNameAndPassword   " + user);
+            return user;
+        }
+        user.setUsername("-1");
+        return user;
     }
 }
