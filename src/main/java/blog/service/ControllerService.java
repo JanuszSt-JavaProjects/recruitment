@@ -38,9 +38,8 @@ public class ControllerService {
     }
 
     public FinalResponse processRequest(HttpExchange t) throws SQLException {
-
-        code=400;
-        JSONResponse ="Your request could not be processed.";
+        code = 400;
+        JSONResponse = "Your request could not be processed.";
 
         setAction(t);
         getResponseFromDb(action);
@@ -50,7 +49,7 @@ public class ControllerService {
         );
     }
 
-    private void setAction(HttpExchange t) {
+    private void setAction(HttpExchange t) throws SQLException {
 
         String stringURI = t.getRequestURI().getQuery();
         if (stringURI == null) {
@@ -59,15 +58,21 @@ public class ControllerService {
             String[] params = stringURI.split("&");
             Map<String, String> requestMap = new HashMap<>();
 
-            for (String param : params) {
-                String name = param.split("=")[0];
-                String value = param.split("=")[1];
-                requestMap.put(name, value);
+
+            try {
+                for (String param : params) {
+                    String name = param.split("=")[0];
+                    String value = param.split("=")[1];
+                    requestMap.put(name, value);
+                    action = requestMap.get("action");
+                    givenParams = requestMap;
+                }
+            } catch (Exception e) {
+                action = "error";
             }
-            action = requestMap.get("action");
-            givenParams = requestMap;
         }
     }
+
 
     private void getResponseFromDb(String action) throws SQLException {
 
@@ -75,56 +80,76 @@ public class ControllerService {
             case "new_user":
                 createNewUser();
                 break;
-           case "delete":
+            case "delete":
                 deletePost();
                 break;
 
-   /*          case "new":
+            case "new":
                 addPost();
                 break;
-            case "login":
+      /*          case "login":
                 login();
                 break;*/
             case "null":
                 getPosts();
+                break;
+            case "error":
+                setError();
         }
+    }
+
+    private void setError() {
+
+        return;   //intentionally not removed to sign, that method should do nothing.
+    }
+
+    private void addPost() throws SQLException {
+
+
+        String txt = givenParams.get("text");
+
+        postService.add(txt);
+        if (postService.add(txt) == 1) {
+            code = 200;
+            JSONResponse = "Post Has been added!";
+        }
+
     }
 
     private void deletePost() throws SQLException {
 
-
         int id = Integer.parseInt(givenParams.get("id"));
-        if(postService.deleteById(id)==1){
-            code=200;
-            JSONResponse ="Post has been successfully deleted!";
-        }else {
-            code=400;
-            JSONResponse ="Post has not been found!";
+        if (postService.deleteById(id) == 1) {
+            code = 200;
+            JSONResponse = "Post has been successfully deleted!";
+        } else {
+            code = 400;
+            JSONResponse = "Post has not been found!";
         }
     }
 
     private void createNewUser() throws SQLException {
-        String username =givenParams.get("username");
+        String username = givenParams.get("username");
         String pass = givenParams.get("password");
-        String permission =givenParams.get("permission");
-        String readonly =givenParams.get("readonly");
+        String permission = givenParams.get("permission");
+        String readonly = givenParams.get("readonly");
 
-       if (userService.existByUsernameAndPassword( username,  pass) ){
-           code=409;
-           JSONResponse ="User already exists in the database!";
+        if (userService.existByUsernameAndPassword(username, pass)) {
+            code = 409;
+            JSONResponse = "User already exists in the database!";
 
-       }else{
-          User user = userService.addUser(username,pass,permission,readonly);
-           code=200;
-           JSONResponse =convertToJSON(user);
-       }
+        } else {
+            User user = userService.addUser(username, pass, permission, readonly);
+            code = 200;
+            JSONResponse = convertToJSON(user);
+        }
     }
 
 
     public void getPosts() throws SQLException {
         code = 200;
 
-       JSONResponse =convertToJSON(postService.getPosts());
+        JSONResponse = convertToJSON(postService.getPosts());
     }
 
     public Post getOne(int id) throws SQLException {
