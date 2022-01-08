@@ -20,7 +20,8 @@ public class UserService {
         User user = findByNameAndPassword(username, pass);
         if (user.getUsername().equals("-1")) {
             return false;
-        };
+        }
+        ;
         return true;
     }
 
@@ -36,7 +37,6 @@ public class UserService {
     }
 
     public User addUser(String username, String password, String permission, String readonly) throws SQLException {
-
 
         String query = "insert into user Values (?,?,?,?,?)";
         PreparedStatement preparedStatement = statement.getConnection().prepareStatement(query);
@@ -68,10 +68,22 @@ public class UserService {
             user.setPermission(execute.getString("permission"));
             user.setReadonly(execute.getString("readonly"));
 
-            System.out.println("user from findByNameAndPassword   " + user);
             return user;
         }
         user.setUsername("-1");
         return user;
     }
+
+    public int authenticate(String username, String password) throws SQLException {
+
+        PreparedStatement preparedStatement = statement.getConnection()
+                .prepareStatement("select count(*) as numbers from user where username =(?) and password=(?)");
+        preparedStatement.setString(1, username);
+        preparedStatement.setString(2, password);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt("numbers");
+    }
+
 }

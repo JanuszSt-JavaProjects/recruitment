@@ -49,13 +49,20 @@ public class ControllerService {
         );
     }
 
+
     private void setAction(HttpExchange t) throws SQLException {
 
-        String stringURI = t.getRequestURI().getQuery();
-        if (stringURI == null) {
+        String baseURI = t.getRequestURI().getPath();
+        if (!baseURI.equals("/blog.php")) {
+            action = "error";
+            return;
+        }
+
+        String queryURI = t.getRequestURI().getQuery();
+        if (queryURI == null) {
             action = "null";
         } else {
-            String[] params = stringURI.split("&");
+            String[] params = queryURI.split("&");
             Map<String, String> requestMap = new HashMap<>();
 
 
@@ -64,9 +71,11 @@ public class ControllerService {
                     String name = param.split("=")[0];
                     String value = param.split("=")[1];
                     requestMap.put(name, value);
-                    action = requestMap.get("action");
-                    givenParams = requestMap;
                 }
+                action = requestMap.get("action") == null ? "error" : requestMap.get("action");
+
+                givenParams = requestMap;
+
             } catch (Exception e) {
                 action = "error";
             }
@@ -87,9 +96,9 @@ public class ControllerService {
             case "new":
                 addPost();
                 break;
-      /*          case "login":
+            case "login":
                 login();
-                break;*/
+                break;
             case "null":
                 getPosts();
                 break;
@@ -98,22 +107,31 @@ public class ControllerService {
         }
     }
 
-    private void setError() {
+    private void login() throws SQLException {
+        String name = givenParams.get("user");
+        String password = givenParams.get("password");
 
-        return;   //intentionally not removed to sign, that method should do nothing.
+        if (userService.authenticate(name, password) == 1) {
+            code = 200;
+            JSONResponse = "Welcome!";
+        } else {
+            code = 403;
+            JSONResponse = "Wrong Credentials!";
+        }
+
+    }
+
+    private void setError() {
+        JSONResponse = "Bad Request!";
     }
 
     private void addPost() throws SQLException {
-
-
         String txt = givenParams.get("text");
-
         postService.add(txt);
         if (postService.add(txt) == 1) {
             code = 200;
             JSONResponse = "Post Has been added!";
         }
-
     }
 
     private void deletePost() throws SQLException {
