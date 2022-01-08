@@ -12,7 +12,6 @@ import java.sql.SQLException;
 
 public class MainController implements HttpHandler {
 
-
     private final ControllerService controllerService = new ControllerService();
 
     public MainController() throws SQLException {
@@ -20,7 +19,6 @@ public class MainController implements HttpHandler {
 
     @Override
     public void handle(HttpExchange t) throws IOException {
-
 
         try {
             FinalResponse finalResponse = controllerService.processRequest(t);
@@ -33,8 +31,8 @@ public class MainController implements HttpHandler {
             os.close();
         } catch (IOException | SQLException e) {
             {
-              int  code = 400;
-               String string = "Your request could not be processed.";
+                int code = 400;
+                String string = "Your request could not be processed.";
                 t.sendResponseHeaders(code, string.length());
                 OutputStream os = t.getResponseBody();
                 os.write(string.getBytes(StandardCharsets.UTF_8));

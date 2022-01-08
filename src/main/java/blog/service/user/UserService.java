@@ -21,7 +21,7 @@ public class UserService {
         if (user.getUsername().equals("-1")) {
             return false;
         }
-        ;
+
         return true;
     }
 

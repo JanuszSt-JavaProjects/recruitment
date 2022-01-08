@@ -49,8 +49,7 @@ public class ControllerService {
         );
     }
 
-
-    private void setAction(HttpExchange t) throws SQLException {
+    private void setAction(HttpExchange t) {
 
         String baseURI = t.getRequestURI().getPath();
         if (!baseURI.equals("/blog.php")) {

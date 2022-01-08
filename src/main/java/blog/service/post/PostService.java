@@ -49,20 +49,19 @@ public class PostService {
     }
 
     public int deleteById(int recordId) throws SQLException {
-           String  sql="delete from blog where id= "+recordId;
+        String sql = "delete from blog where id= " + recordId;
         return statement.executeUpdate(sql);
     }
 
     public int add(String txt) throws SQLException {
-        int  FIXED_USER_ID = 0;
+        int FIXED_USER_ID = 0;
 
-        PreparedStatement preparedStatement =statement.getConnection()
+        PreparedStatement preparedStatement = statement.getConnection()
                 .prepareStatement("insert into blog VALUES (null,?,?)");
 
-        preparedStatement.setString(1,txt);
-        preparedStatement.setInt(2,FIXED_USER_ID);
+        preparedStatement.setString(1, txt);
+        preparedStatement.setInt(2, FIXED_USER_ID);
 
-       int res= preparedStatement.executeUpdate();
-        return res;
+        return preparedStatement.executeUpdate();
     }
 }
