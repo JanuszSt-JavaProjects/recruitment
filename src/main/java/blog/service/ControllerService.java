@@ -39,8 +39,8 @@ public class ControllerService {
 
     public FinalResponse processRequest(HttpExchange t) throws SQLException {
 
-        code=403;
-        JSONResponse ="No permission!";
+        code=400;
+        JSONResponse ="Your request could not be processed.";
 
         setAction(t);
         getResponseFromDb(action);
@@ -90,8 +90,17 @@ public class ControllerService {
         }
     }
 
-    private void deletePost() {
+    private void deletePost() throws SQLException {
 
+
+        int id = Integer.parseInt(givenParams.get("id"));
+        if(postService.deleteById(id)==1){
+            code=200;
+            JSONResponse ="Post has been successfully deleted!";
+        }else {
+            code=400;
+            JSONResponse ="Post has not been found!";
+        }
     }
 
     private void createNewUser() throws SQLException {

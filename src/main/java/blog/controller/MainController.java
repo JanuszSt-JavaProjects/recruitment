@@ -33,8 +33,8 @@ public class MainController implements HttpHandler {
             os.close();
         } catch (IOException | SQLException e) {
             {
-              int  code = 404;
-               String string = " No matching record !";
+              int  code = 400;
+               String string = "Your request could not be processed.";
                 t.sendResponseHeaders(code, string.length());
                 OutputStream os = t.getResponseBody();
                 os.write(string.getBytes(StandardCharsets.UTF_8));

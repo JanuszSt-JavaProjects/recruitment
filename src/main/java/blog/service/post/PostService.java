@@ -47,4 +47,12 @@ public class PostService {
         return post;
     }
 
+    public int deleteById(int recordId) throws SQLException {
+
+           String  sql="delete from blog where id= "+recordId;
+
+        return statement.executeUpdate(sql);
+
+
+    }
 }
