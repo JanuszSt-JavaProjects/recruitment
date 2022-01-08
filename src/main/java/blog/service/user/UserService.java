@@ -25,17 +25,6 @@ public class UserService {
         return true;
     }
 
-    public boolean existByUserId(int id) throws SQLException {
-
-        String query = "select count(*) as existingUsers from user where userid = (?)";
-        PreparedStatement preparedStatement = statement.getConnection().prepareStatement(query);
-        preparedStatement.setInt(1, id);
-
-        ResultSet execute = preparedStatement.executeQuery();
-        execute.next();
-        return execute.getInt("existingUsers") > 0;
-    }
-
     public User addUser(String username, String password, String permission, String readonly) throws SQLException {
 
         String query = "insert into user Values (?,?,?,?,?)";

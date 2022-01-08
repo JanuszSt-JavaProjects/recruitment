@@ -9,21 +9,6 @@ public class User {
     private String permission;
     private String readonly;
 
-    public User(int id, String username, String password, String permission, String readonly) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.permission = permission;
-        this.readonly = readonly;
-    }
-
-    public User(String username, String password, String permission, String readonly) {
-        this.username = username;
-        this.password = password;
-        this.permission = permission;
-        this.readonly = readonly;
-    }
-
     public User() {
     }
 
@@ -51,9 +36,6 @@ public class User {
         return Objects.hash(id, username, password, permission, readonly);
     }
 
-    public int getId() {
-        return id;
-    }
 
     public void setId(int id) {
         this.id = id;
@@ -67,24 +49,12 @@ public class User {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public String getPermission() {
-        return permission;
-    }
-
     public void setPermission(String permission) {
         this.permission = permission;
-    }
-
-    public String getReadonly() {
-        return readonly;
     }
 
     public void setReadonly(String readonly) {

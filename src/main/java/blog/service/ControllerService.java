@@ -2,7 +2,6 @@ package blog.service;
 
 import blog.config.Configuration;
 import blog.domain.FinalResponse;
-import blog.domain.Post;
 import blog.domain.User;
 import blog.service.post.PostService;
 import blog.service.user.UserService;
@@ -162,15 +161,10 @@ public class ControllerService {
         }
     }
 
-
     public void getPosts() throws SQLException {
         code = 200;
 
         JSONResponse = convertToJSON(postService.getPosts());
-    }
-
-    public Post getOne(int id) throws SQLException {
-        return postService.getOne(id);
     }
 
     private String convertToJSON(Object input) {
